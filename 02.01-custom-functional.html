@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Component Lifecycle</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="react/react.js"></script>
+    <script src="react/react-dom.js"></script>
+    <script>
+      var Component = React.createClass({
+        propTypes: {
+          firstName: React.PropTypes.string.isRequired,
+          lastName: React.PropTypes.string,
+        },
+        getDefaultProps: function () {
+          return {
+            lastName: "Doe",
+          };
+        },
+        render: function () {
+          return React.DOM.span(
+            null,
+            "I am " + this.props.firstName + " " + this.props.lastName
+          );
+        },
+      });
+
+      ReactDOM.render(
+        React.createElement(Component, {
+          firstName: "John",
+        }),
+        document.getElementById("app")
+      );
+    </script>
+  </body>
+</html>
