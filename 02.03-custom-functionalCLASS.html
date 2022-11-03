@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Component Lifecycle</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="react/react.js"></script>
+    <script src="react/react-dom.js"></script>
+    <script>
+      class MyComponent extends React.Component {
+        render() {
+          return React.createElement("span", null, "I am so custom");
+          //or with JSX:
+          //return <span>I am so custom</span>;
+        }
+      }
+      ReactDOM.render(
+        React.createElement(MyComponent),
+        document.getElementById("app")
+      );
+    </script>
+  </body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Component Lifecycle</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="react/react.js"></script>
+    <script src="react/react-dom.js"></script>
+    <script src="react/babel.js"></script>
+
+    <script type="text/babel">
+      class TextAreaCounter extends React.Component {
+        render() {
+          const text = this.props.text;
+          return (
+            <div>
+              <textarea defaultValue={text} />
+              <h3>{text.length}</h3>
+            </div>
+          );
+        }
+      }
+
+      TextAreaCounter.defaultProps = { text: "Count me as I type" };
+
+      ReactDOM.render(
+        <TextAreaCounter text="Bob" />,
+        document.getElementById("app")
+      );
+    </script>
+  </body>
+</html>
