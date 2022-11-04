@@ -15,14 +15,14 @@
         constructor() {
           super();
           this.state = {};
-          this.onTextChange = this.onTextChange.bind(this);
+          // this.onTextChange = this.onTextChange.bind(this);
         }
 
-        onTextChange(event) {
+        onTextChange = (event) => {
           this.setState({
             text: event.target.value,
           });
-        }
+        };
 
         render() {
           const text = "text" in this.state ? this.state.text : this.props.text;
@@ -38,12 +38,12 @@
         }
       }
 
-      TextAreaCounter.defaultProps = { text: "Count me as I type" };
-
-      ReactDOM.render(
-        <TextAreaCounter text="Bob" />,
+      const myTextAreaCounter = ReactDOM.render(
+        <TextAreaCounter text="" />,
         document.getElementById("app")
       );
+
+      myTextAreaCounter.setState({ text: "Hello outside world!!" });
     </script>
   </body>
 </html>

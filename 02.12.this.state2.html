@@ -15,14 +15,14 @@
         constructor() {
           super();
           this.state = {};
-          this.onTextChange = this.onTextChange.bind(this);
+          // this.onTextChange = this.onTextChange.bind(this);
         }
 
-        onTextChange(event) {
+        onTextChange = (event) => {
           this.setState({
             text: event.target.value,
           });
-        }
+        };
 
         render() {
           const text = "text" in this.state ? this.state.text : this.props.text;
