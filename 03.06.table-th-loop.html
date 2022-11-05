@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>A Fancy Table Component</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="react/react.js"></script>
+    <script src="react/react-dom.js"></script>
+    <script src="react/babel.js"></script>
+
+    <script type="text/babel">
+      const headers = ["Book", "Author", "Language", "Published", "Sales"];
+
+      const data = [
+        [
+          "A tale of two Cities",
+          "Charles Dickens",
+          "English",
+          "1859",
+          "200 million",
+        ],
+        [
+          "Le Petit Prince (The Little Prince)",
+          "Antoine de Saint-Exupery",
+          "French",
+          "1943",
+          "150 million",
+        ],
+        [
+          "Harry Potter and The Philosophers Stone",
+          "J. K. Rowling",
+          "English",
+          "1997",
+          "120 million",
+        ],
+        [
+          "And then There were None",
+          "Agatha Christie",
+          "English",
+          "1939",
+          "100 million",
+        ],
+        [
+          "Dream of the Red Chamber",
+          "Cao Xueqin",
+          "Chinese",
+          "1791",
+          "100 million",
+        ],
+        ["The Hobbit", "J. R. R. Tolkien", "English", "1937", "100 million"],
+      ];
+
+      class Excel extends React.Component {
+        render() {
+          const headers = [];
+
+          for (const idx in this.props.headers) {
+            const title = this.props.headers[idx];
+            headers.push(<th key={idx}>{title}</th>);
+          }
+
+          // for (const title of this.props.headers) {
+          //   headers.push(<th>{title}</th>);
+          // }
+          return (
+            <table>
+              <thead>
+                <tr>{headers}</tr>
+              </thead>
+            </table>
+          );
+        }
+      }
+
+      ReactDOM.render(
+        <Excel headers={headers} />,
+        document.getElementById("app")
+      );
+    </script>
+  </body>
+</html>
