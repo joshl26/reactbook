@@ -56,7 +56,11 @@
       class Excel extends React.Component {
         constructor(props) {
           super();
-          this.state = { data: props.initialData };
+          this.state = {
+            data: props.initialData,
+            sortby: null,
+            descending: false,
+          };
           this.sort = this.sort.bind(this);
         }
 
