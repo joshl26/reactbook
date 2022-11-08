@@ -87,11 +87,17 @@
             if (a[column] === b[column]) {
               return 0;
             }
-            return a[column] > b[column] ? 1 : -1;
+            return descending
+              ? a[column] < b[column]
+                ? 1
+                : -1
+              : a[column] > b[column]
+              ? 1
+              : -1;
           });
 
           //console.log(data);
-          this.setState({ data });
+          this.setState({ data, sortby: column, descending });
         }
 
         render() {
@@ -100,6 +106,9 @@
               <thead onClick={this.sort}>
                 <tr>
                   {this.props.headers.map((title, idx) => {
+                    if (this.state.sortby === idx) {
+                      title += this.state.descending ? "\u2191" : "\u2193";
+                    }
                     return <th key={idx}>{title}</th>;
                   })}
                 </tr>
