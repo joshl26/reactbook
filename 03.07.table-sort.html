@@ -12,7 +12,7 @@
     <script src="react/prop-types.js"></script>
 
     <script type="text/babel">
-      const headers = [0, "Author", "Language", "Published", "Sales"];
+      const headers = ["Title", "Author", "Language", "Published", "Sales"];
 
       const data = [
         [
@@ -57,12 +57,17 @@
         constructor(props) {
           super();
           this.state = { data: props.initialData };
+          this.sort = this.sort.bind(this);
+        }
+
+        sort(e) {
+          //TODO: Implement me
         }
 
         render() {
           return (
             <table>
-              <thead>
+              <thead onClick={this.sort}>
                 <tr>
                   {this.props.headers.map((title, idx) => {
                     return <th key={idx}>{title}</th>;
