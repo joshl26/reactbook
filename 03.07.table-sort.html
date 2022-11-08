@@ -61,9 +61,31 @@
         }
 
         sort(e) {
-          console.log(e);
+          console.log(e.target.cellIndex);
 
-          //TODO: Implement me
+          const column = e.target.cellIndex;
+
+          function clone(o) {
+            console.log("Clone object -");
+            console.log(o);
+            return JSON.parse(JSON.stringify(o));
+          }
+
+          // Copy the data, NEVER change this.state, always use setState()
+          const data = clone(this.state.data);
+
+          console.log("Cloned Data JSON -");
+          console.log(data);
+
+          data.sort((a, b) => {
+            if (a[column] === b[column]) {
+              return 0;
+            }
+            return a[column] > b[column] ? 1 : -1;
+          });
+
+          //console.log(data);
+          this.setState({ data });
         }
 
         render() {
