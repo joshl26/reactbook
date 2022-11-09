@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Functional Excel</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="react/react.js"></script>
+    <script src="react/react-dom.js"></script>
+    <script src="react/babel.js"></script>
+    <script src="react/prop-types.js"></script>
+
+    <script type="text/babel">
+      function Example2() {
+        return (
+          <h1>
+            {1}
+            plus
+            {2}
+            is
+            {3}
+          </h1>
+        );
+      }
+
+      ReactDOM.render(<Example2 />, document.getElementById("app"));
+    </script>
+  </body>
+</html>
