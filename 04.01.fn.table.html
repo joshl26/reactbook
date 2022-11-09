@@ -12,8 +12,27 @@
     <script src="react/prop-types.js"></script>
 
     <script type="text/babel">
-      function Excel(props) {
-        //Implement me
+      function Excel({ headers, initialData }) {
+        return (
+          <table>
+            <thead>
+              <tr>
+                {headers.map((title, idx) => {
+                  <th key={idx}>{title}</th>;
+                })}
+              </tr>
+            </thead>
+            <tbody>
+              {initialData.map((row, idx) => (
+                <tr key={idx}>
+                  {row.map((cell, idx) => (
+                    <td key={idx}>{cell}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        );
       }
 
       Excel.propTypes = {
@@ -21,7 +40,7 @@
         initialData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
       };
 
-      const headers = ["Title", "Author", "Language", "Published", "Sales"];
+      const headers = ["Book", "Author", "Language", "Published", "Sales"];
 
       const data = [
         [
