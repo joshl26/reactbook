@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Functional Excel</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="react/react.js"></script>
+    <script src="react/react-dom.js"></script>
+    <script src="react/babel.js"></script>
+    <script src="react/prop-types.js"></script>
+
+    <script type="text/babel">
+      function RandomData() {
+        const initialState = { data: [], color: "black", background: "white" };
+
+        const [state, dispatch] = React.useReducer(myReducer, initialState);
+
+        function clone(o) {
+          return JSON.parse(JSON.stringify(o));
+        }
+
+        function rand(max) {
+          return Math.floor(Math.random() * max);
+        }
+
+        function myReducer(oldState, action) {
+          const newState = clone(oldState);
+          if (action.type === "recolor") {
+            newState[action.payload.what] =
+              "rgb(${rand(256)}, ${rand(256)}, ${rand(256)})";
+          } else if (action.type === "newdata") {
+            const data = [];
+            for (let i = 0; i < 10; i++) {
+              data[i] = [];
+              for (let j = 0; j < 10; j++) {
+                data[i][j] = rand(10000);
+              }
+            }
+            newState.data = data;
+          }
+          return newState;
+        }
+
+        return (
+          <div>
+            <div className="toolbar">
+              <button onClick={() => dispatch({ type: "newdata" })}>
+                Get data
+              </button>{" "}
+              <button
+                onClick={() =>
+                  dispatch({ type: "recolor", payload: { what: "color" } })
+                }
+              >
+                Recolor Text
+              </button>{" "}
+              <button
+                onClick={() =>
+                  dispatch({ type: "recolor", payload: { what: "background" } })
+                }
+              >
+                Recolor Background
+              </button>
+            </div>
+            <table>
+              <tbody>
+                {data.map((row, idx) => (
+                  <tr key={idx}>
+                    {row.map((cell, idx) => (
+                      <td key={idx}>{cell}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      }
+
+      ReactDOM.render(<RandomData />, document.getElementById("app"));
+    </script>
+  </body>
+</html>
