@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Functional Excel</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="react/react.js"></script>
+    <script src="react/react-dom.js"></script>
+    <script src="react/babel.js"></script>
+    <script src="react/prop-types.js"></script>
+
+    <script type="text/babel">
+      function FancyLink(props) {
+        const { variant, ...attribs } = props;
+
+        const classes = ["link-core"];
+
+        switch (props.variant) {
+          case "small":
+            classes.push("link-small");
+            break;
+          case "huge":
+            classes.push("link-huge");
+            break;
+          default:
+            classes.push("link-default");
+        }
+
+        return (
+          <a {...attribs} className={classes.join(" ")}>
+            {props.children}
+          </a>
+        );
+      }
+
+      ReactDOM.render(
+        <FancyLink
+          href="https://example.org"
+          rel="canonical"
+          target="_blank"
+          variant="small"
+        >
+          {" "}
+          Follow Me{" "}
+        </FancyLink>,
+        document.getElementById("app")
+      );
+    </script>
+  </body>
+</html>
