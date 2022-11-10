@@ -12,15 +12,16 @@
     <script src="react/prop-types.js"></script>
 
     <script type="text/babel">
-      function FragmentExample() {
-        return (
-          <React.Fragment>
-            <span>Hello</span> <span>World!</span>
-          </React.Fragment>
-        );
+      function ArrayExample() {
+        return [
+          <span key="a">Hello</span>,
+          " ",
+          <span skey="b">World</span>,
+          "!",
+        ];
       }
 
-      ReactDOM.render(<FragmentExample />, document.getElementById("app"));
+      ReactDOM.render(<ArrayExample />, document.getElementById("app"));
     </script>
   </body>
 </html>
