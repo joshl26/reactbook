@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Functional Excel</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="react/react.js"></script>
+    <script src="react/react-dom.js"></script>
+    <script src="react/babel.js"></script>
+    <script src="react/prop-types.js"></script>
+
+    <script type="text/babel">
+      function Example({ layout }) {
+        if (layout === null) {
+          return null;
+        }
+
+        if (layout) {
+          useLayoutEffect(() => {
+            const table = document.getElementByTagName("table")[0];
+            console.log(table.offsetWidth);
+            table.width = "250px";
+          }, []);
+        }
+
+        return (
+          <table>
+            <thead>
+              <tr>
+                <th>Random</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from(Array(10000)).map((_, idx) => (
+                <tr>
+                  <td width={Math.random() * 800}>{Math.random()} </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        );
+      }
+
+      function ExampleParent() {
+        const [layout, setLayout] = React.useState(null);
+
+        return (
+          <div>
+            <button onClick={() => setLayout(false)}>useEffect</button>{" "}
+            <button onClick={() => setLayout(true)}>useLayoutEffect</button>{" "}
+            <button onClick={() => setLayout(null)}>Clear</button>{" "}
+            <Example layout={layout} />
+          </div>
+        );
+      }
+
+      ReactDOM.render(<ExampleParent />, document.getElementById("app"));
+    </script>
+  </body>
+</html>
