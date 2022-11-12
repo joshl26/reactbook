@@ -7,6 +7,7 @@ import Rating from "./Rating";
 import FormInput from "./FormInput";
 import Form from "./Form";
 import Actions from "./Actions";
+import DialogExample from "./DialogExample";
 
 import { useRef } from "react";
 
@@ -126,7 +127,14 @@ function Discovery() {
       </p>
 
       <h2>Actions</h2>
-      <Actions onAction={(type) => alert(type)} />
+      <p>
+        <Actions onAction={(type) => alert(type)} />
+      </p>
+
+      <h2>Dialog</h2>
+      <p>
+        <DialogExample />
+      </p>
     </div>
   );
 }
