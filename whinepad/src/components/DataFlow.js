@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import Header from "./Header";
 import Body from "./Body";
 import Dialog from "./Dialog";
-import Excel from "./Dialog";
+import Excel from "./Excel";
 import Form from "./Form";
 import clone from "../module/clone";
 
@@ -33,8 +33,60 @@ function DataFlow({ schema, initialData }) {
   const form = useRef(null);
 
   function saveNew(action) {
-    /* TODO */
+    setAddNew(false);
+    if (action === "dismiss") {
+      return;
+    }
+
+    const formData = {};
+    Array.from(form.current).forEach(
+      (input) => (formData[input.id] = input.value)
+    );
+
+    dispatch({
+      type: "save",
+      payload: { formData },
+    });
   }
+
+  function onExcelDataChange(updatedData) {
+    dispatch({
+      type: "excelchange",
+      payload: { updatedData },
+    });
+  }
+
+  function onSearch(e) {
+    setFilter(e.target.value);
+  }
+
+  return (
+    <div className="DataFLow">
+      <Header
+        onAdd={() => setAddNew(true)}
+        onSearch={onSearch}
+        count={data.length}
+      />
+      <Body>
+        <Excel
+          schema={schema}
+          initialData={data}
+          key={data}
+          onDataChange={(updatedData) => onExcelDataChange(updatedData)}
+        />
+        {addNew ? (
+          <Dialog
+            modal={true}
+            header="Add new Item"
+            confirmLabel="Add"
+            onAction={(action) => saveNew(action)}
+          >
+            <Form ref={form} fields={schema} />
+          </Dialog>
+        ) : null}
+      </Body>
+    </div>
+  );
 }
 
 DataFlow.propTypes = {

@@ -47,9 +47,9 @@ function reducer(data, action) {
 }
 
 function Excel({ schema, initialData, onDataChange, filter }) {
-  const [data, dispatch] = useState(initialData);
+  const [data, dispatch] = useReducer(reducer, initialData);
   const [sorting, setSorting] = useState({
-    column: "",
+    column: null,
     descending: false,
   });
   const [edit, setEdit] = useState(null);
@@ -206,7 +206,7 @@ function Excel({ schema, initialData, onDataChange, filter }) {
                 {Object.keys(row).map((cell, columnidx) => {
                   const config = schema[cell];
 
-                  if (!config) {
+                  if (!config.show) {
                     return null;
                   }
 
