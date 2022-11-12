@@ -5,8 +5,13 @@ import Button from "./Button";
 import Suggest from "./Suggest";
 import Rating from "./Rating";
 import FormInput from "./FormInput";
+import Form from "./Form";
+
+import { useRef } from "react";
 
 function Discovery() {
+  const form = useRef();
+
   return (
     <div>
       <h2>Logo</h2>
@@ -88,13 +93,36 @@ function Discovery() {
             </td>
           </tr>
           <tr>
-            <td>Vamilla textarea</td>
+            <td>Vanilla textarea</td>
             <td>
               <FormInput type="textarea" />
             </td>
           </tr>
         </tbody>
       </table>
+
+      <h2>Form</h2>
+      <p>
+        <Form
+          ref={form}
+          fields={{
+            rateme: { label: "Rating", type: "rating" },
+            freetext: { label: "Greetings" },
+          }}
+          initialData={{ rateme: 4, freetext: "Hello" }}
+        />
+        <Button
+          onClick={() => {
+            const data = {};
+            Array.from(form.current).forEach(
+              (input) => (data[input.id] = input.value)
+            );
+            alert(JSON.stringify(data));
+          }}
+        >
+          Submit
+        </Button>
+      </p>
     </div>
   );
 }
