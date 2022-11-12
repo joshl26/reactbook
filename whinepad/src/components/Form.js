@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import Rating from "./Rating";
 import FormInput from "./FormInput";
 import "./Form.css";
-import Button from "./Button";
 
 const Form = forwardRef(
   ({ fields, initialData = {}, readonly = false }, ref) => {
@@ -16,18 +15,32 @@ const Form = forwardRef(
             if (prefilled) {
               return null;
             }
+
+            return (
+              <div className="FormRow" key={id}>
+                <span className="FormLabel">{label}</span>
+                {type === "rating" ? (
+                  <Rating
+                    readonly={true}
+                    defaultValue={parseInt(prefilled, 10)}
+                  />
+                ) : (
+                  <div>{prefilled}</div>
+                )}
+              </div>
+            );
           }
           return (
             <div className="FormRow" key={id}>
-              <span className="FormLabel">{label}</span>
-              {type === "rating" ? (
-                <Rating
-                  readonly={true}
-                  defaultValue={parseInt(prefilled, 10)}
-                />
-              ) : (
-                <div>{prefilled}</div>
-              )}
+              <label className="FormLabel" htmlFor={id}>
+                {label}
+              </label>
+              <FormInput
+                id={id}
+                type={type}
+                options={options}
+                defaultValue={prefilled}
+              />
             </div>
           );
         })}
