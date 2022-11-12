@@ -4,7 +4,13 @@ function Discovery() {
   return (
     <div>
       <h2>Excel</h2>
-      <Excel headers={headers} initialData={initialData} />
+      <Excel
+        headers={["Name", "Year"]}
+        initialData={[
+          ["Charles", "1859"],
+          ["Antoine", "1943"],
+        ]}
+      />
     </div>
   );
 }
