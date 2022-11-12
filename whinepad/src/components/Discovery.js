@@ -6,6 +6,7 @@ import Suggest from "./Suggest";
 import Rating from "./Rating";
 import FormInput from "./FormInput";
 import Form from "./Form";
+import Actions from "./Actions";
 
 import { useRef } from "react";
 
@@ -123,6 +124,9 @@ function Discovery() {
           Submit
         </Button>
       </p>
+
+      <h2>Actions</h2>
+      <Actions onAction={(type) => alert(type)} />
     </div>
   );
 }
