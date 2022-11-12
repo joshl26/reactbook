@@ -1,54 +1,18 @@
-import React from "react";
 import PropTypes from "prop-types";
+import Actions from "./Actions";
 import clone from "../module/clone";
 import "./Excel.css";
+import Rating from "./Rating";
+import Form from "./Form";
 
-//do the work
+import { useState, useReducer, useRef } from "react";
+import Dialog from "./Dialog";
+import classNames from "classnames";
 
-// const headers = ["Book", "Author", "Language", "Published", "Sales"];
-
-// const data = [
-//   ["A tale of two Cities", "Charles Dickens", "English", "1859", "200 million"],
-//   [
-//     "Le Petit Prince (The Little Prince)",
-//     "Antoine de Saint-Exupery",
-//     "French",
-//     "1943",
-//     "150 million",
-//   ],
-//   [
-//     "Harry Potter and The Philosophers Stone",
-//     "J. K. Rowling",
-//     "English",
-//     "1997",
-//     "120 million",
-//   ],
-//   [
-//     "And then There were None",
-//     "Agatha Christie",
-//     "English",
-//     "1939",
-//     "100 million",
-//   ],
-//   ["Dream of the Red Chamber", "Cao Xueqin", "Chinese", "1791", "100 million"],
-//   ["The Hobbit", "J. R. R. Tolkien", "English", "1937", "100 million"],
-// ];
-
-function Excel({ headers, initialData }) {
-  const [data, setData] = React.useState(initialData);
-  const [sorting, setSorting] = React.useState({
-    column: null,
-    descending: false,
-  });
-  const [edit, setEdit] = React.useState(null);
-
-  function sort(e) {
-    const column = e.target.cellIndex;
-    const descending = sorting.column === column && !sorting.descending;
-
-    const dataCopy = clone(data);
-
-    dataCopy.sort((a, b) => {
+function reducer(data, action) {
+  if (action.type === "sort") {
+    const { column, descending } = action.payload;
+    return data.sort((a, b) => {
       if (a[column] === b[column]) {
         return 0;
       }
@@ -60,64 +24,245 @@ function Excel({ headers, initialData }) {
         ? 1
         : -1;
     });
+  }
+  if (action.type === "save") {
+    const { int, edit } = action.payload;
+    data[edit.row][edit.column] = int
+      ? parseInt(action.payload.value, 10)
+      : action.payload.value;
+  }
+  if (action.type === "delete") {
+    data.clone(data);
+    data.splice(action.payload.rowidx, 1);
+  }
 
-    setData(dataCopy);
+  if (action.type === "saveForm") {
+    Array.from(action.payload.form.current).forEach(
+      (input) => (data[action.payload.rowidx][input.id] = input.value)
+    );
+  }
+
+  setTimeout(() => action.payload.onDataChange(data));
+  return data;
+}
+
+function Excel({ schema, initialData, onDataChange, filter }) {
+  const [data, dispatch] = useState(initialData);
+  const [sorting, setSorting] = useState({
+    column: "",
+    descending: false,
+  });
+  const [edit, setEdit] = useState(null);
+
+  const [dialog, setDialog] = useState(null);
+
+  const form = useRef(null);
+
+  function sort(e) {
+    const column = e.target.dataset.id;
+
+    if (!column) {
+      // the last "Action" column is not sortable
+      return;
+    }
+
+    const descending = sorting.column === column && !sorting.descending;
+
     setSorting({ column, descending });
+    dispatch({ type: "sort", payload: { column, descending } });
   }
 
   function showEditor(e) {
+    const config = e.target.dataset.schema;
+    if (!config || config === "rating") {
+      return;
+    }
+
     setEdit({
       row: parseInt(e.target.parentNode.dataset.row, 10),
-      column: e.target.cellIndex,
+      column: config,
     });
   }
 
   function save(e) {
     e.preventDefault();
-    const input = e.target.firstChild;
-    const dataCopy = clone(data);
-    dataCopy[edit.row][edit.column] = input.value;
+
+    const value = e.target.firstChild.value;
+    const valueType = schema[e.target.parentNode.dataset.schema].type;
+
+    dispatch({
+      type: "save",
+      payload: {
+        edit,
+        value,
+        onDataChange,
+        int: valueType === "year" || valueType === "rating",
+      },
+    });
+
     setEdit(null);
-    setData(dataCopy);
   }
+
+  function handleAction(rowidx, type) {
+    if (type === "delete") {
+      setDialog(
+        <Dialog
+          modal
+          header="Confirm deletion"
+          confirmLabel="Delete"
+          onAction={(action) => {
+            dispatch({
+              type: "delete",
+              payload: {
+                rowidx,
+                onDataChange,
+              },
+            });
+          }}
+        >
+          {`Are you sure you want to delete "${data[rowidx].name}"?`}
+        </Dialog>
+      );
+
+      const isEdit = type === "edit";
+
+      if (type === "info" || isEdit) {
+        const formPrefill = data[rowidx];
+        setDialog(
+          <Dialog
+            modal
+            extendedDismiss={!isEdit}
+            header={isEdit ? "Edit item" : "Item details"}
+            confirmLabel={isEdit ? "Save" : "ok"}
+            hasCancel={isEdit}
+            onAction={(action) => {
+              setDialog(null);
+              if (!isEdit && action === "confirm") {
+                dispatch({
+                  type: "saveform",
+                  payload: {
+                    rowidx,
+                    onDataChange,
+                    form,
+                  },
+                });
+              }
+            }}
+          >
+            <Form
+              ref={form}
+              fields={schema}
+              initialData={formPrefill}
+              readonly={!isEdit}
+            />
+          </Dialog>
+        );
+      }
+    }
+  }
+
+  setDialog(<Dialog />);
 
   return (
     <div className="Excel">
       <table>
         <thead onClick={sort}>
           <tr>
-            {headers.map((title, idx) => {
-              if (sorting.column === idx) {
-                title += sorting.descending ? "\u2191" : "\u2193";
+            {Object.keys(schema).map((key) => {
+              let { label, show } = schema[key];
+              if (!show) {
+                return null;
               }
-              return <th key={idx}>{title}</th>;
+              if (sorting.column === key) {
+                label += sorting.descending ? " \u2191 " : "\u2193";
+              }
+              return (
+                <th key={key} data-id={key}>
+                  {label}
+                </th>
+              );
             })}
+            <th className="ExcelNotSortable">Actions</th>
           </tr>
         </thead>
         <tbody onDoubleClick={showEditor}>
-          {data.map((row, rowidx) => (
-            <tr key={rowidx} data-row={rowidx}>
-              {row.map((cell, columnidx) => {
-                if (edit && edit.row === rowidx && edit.column === columnidx) {
-                  cell = (
-                    <form onSubmit={save}>
-                      <input type="text" defaultValue={cell} />
-                    </form>
-                  );
+          {data.map((row, rowidx) => {
+            if (filter) {
+              const needle = filter.toLowerCase();
+              let match = false;
+              const fields = Object.keys(schema);
+              for (let f = 0; f < fields.length; f++) {
+                if (row[fields[f]].toString().toLowerCase().includes(needle)) {
+                  match = true;
                 }
-                return <td key={columnidx}>{cell}</td>;
-              })}
-            </tr>
-          ))}
+              }
+              if (!match) {
+                return null;
+              }
+            }
+
+            return (
+              <tr key={rowidx} data-row={rowidx}>
+                {Object.keys(row).map((cell, columnidx) => {
+                  const config = schema[cell];
+
+                  if (!config) {
+                    return null;
+                  }
+
+                  let content = row[cell];
+                  if (edit && edit.row === rowidx && edit.column === cell) {
+                    content = (
+                      <form onSubmit={save}>
+                        <input type="text" defaultValue={content} />
+                      </form>
+                    );
+                  } else if (config.type === "rating") {
+                    content = (
+                      <Rating
+                        id={cell}
+                        readonly
+                        key={content}
+                        defaultValue={Number(content)}
+                      />
+                    );
+                  }
+
+                  return (
+                    <td
+                      key={columnidx}
+                      data-schema={cell}
+                      className={classNames({
+                        [`schema-${cell}`]: true,
+                        ExcelEditable: config.type !== "rating",
+                        ExcelDataLeft: config.align === "left",
+                        ExcelDataRight: config.align === "right",
+                        ExcelDataCenter:
+                          config.align !== "left" && config.align !== "right",
+                      })}
+                    >
+                      {content}
+                    </td>
+                  );
+                })}
+                <td>
+                  <Actions onAction={handleAction.bind(null, rowidx)} />
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
+      {dialog}
     </div>
   );
 }
 
 Excel.propTypes = {
-  headers: PropTypes.arrayOf(PropTypes.string),
-  initialData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
+  schema: PropTypes.object,
+  initialData: PropTypes.arrayOf(PropTypes.object),
+  onDataChange: PropTypes.func,
+  filter: PropTypes.string,
 };
 
 //export
