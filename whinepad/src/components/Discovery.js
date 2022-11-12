@@ -12,7 +12,17 @@ import Header from "./Header";
 
 import { useRef } from "react";
 
+import schema from "../config/schema";
+
 function Discovery() {
+  let headers = localStorage.getItem("headers");
+  let data = localStorage.getItem("data");
+
+  if (!headers) {
+    headers = ["Title", "Year", "Rating", "Comments"];
+    data = [["Red Whine", "2021", "3", "meh"]];
+  }
+
   const form = useRef();
 
   return (
@@ -141,6 +151,21 @@ function Discovery() {
       <p>
         <Header />
       </p>
+
+      <h2>Excel</h2>
+      <Excel
+        schema={schema}
+        initialData={schema.name.samples.map((_, idx) => {
+          const element = {};
+          for (let key in schema) {
+            element[key] = schema[key].samples[idx];
+          }
+          return element;
+        })}
+        onDataChange={(data) => {
+          console.log(data);
+        }}
+      />
     </div>
   );
 }

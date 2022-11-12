@@ -1,14 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { useState, useReducer } from "react";
 import clone from "../module/clone";
 import "./Excel.css";
 
 //do the work
-Excel.propTypes = {
-  headers: PropTypes.arrayOf(PropTypes.string),
-  initialData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
-};
 
 // const headers = ["Book", "Author", "Language", "Published", "Sales"];
 
@@ -46,8 +41,6 @@ function Excel({ headers, initialData }) {
     descending: false,
   });
   const [edit, setEdit] = React.useState(null);
-  const [search, setSearch] = React.useState(false);
-  const [preSearchData, setPreSearchData] = React.useState(null);
 
   function sort(e) {
     const column = e.target.cellIndex;
@@ -121,6 +114,11 @@ function Excel({ headers, initialData }) {
     </div>
   );
 }
+
+Excel.propTypes = {
+  headers: PropTypes.arrayOf(PropTypes.string),
+  initialData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
+};
 
 //export
 export default Excel;
