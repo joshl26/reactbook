@@ -8,6 +8,7 @@ import FormInput from "./FormInput";
 import Form from "./Form";
 import Actions from "./Actions";
 import DialogExample from "./DialogExample";
+import Header from "./Header";
 
 import { useRef } from "react";
 
@@ -134,6 +135,11 @@ function Discovery() {
       <h2>Dialog</h2>
       <p>
         <DialogExample />
+      </p>
+
+      <h2>Header</h2>
+      <p>
+        <Header />
       </p>
     </div>
   );
